@@ -23,7 +23,20 @@ def console_event(event):
         print(f"Цель: {event['target'].id}; точка в кадре: {event['target'].center}")
 
 
+def configure_console():
+    """Перенаправленный вывод Windows также должен сохранять русские сообщения."""
+    for stream in (sys.stdout, sys.stderr):
+        reconfigure = getattr(stream, "reconfigure", None)
+        if callable(reconfigure):
+            try:
+                reconfigure(encoding="utf-8", errors="backslashreplace")
+            except (OSError, ValueError):
+                # Подменённый поток может запрещать смену кодировки.
+                pass
+
+
 def main(argv=None):
+    configure_console()
     parser = argparse.ArgumentParser(description="HOI4 AI Commander — безопасный прототип")
     commands = parser.add_subparsers(dest="command", required=True)
     demo = commands.add_parser("demo", help="Синтетические кадры, без ввода в ОС")

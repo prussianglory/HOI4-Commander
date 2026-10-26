@@ -35,7 +35,7 @@ python -m pip install -e '.[dev,windows]'
 QT_QPA_PLATFORM=offscreen python -m pytest -q
 ```
 
-Группа `windows` включает PySide6 и на Linux; PyDirectInput устанавливается только на Windows. В GitHub Actions системные библиотеки устанавливаются отдельным Linux-шагом, после чего явно проверяется создание `QApplication`. Ошибка загрузки Qt не маскируется пропуском тестов.
+Группа `windows` включает PySide6 и на Linux; PyDirectInput устанавливается только на Windows. В GitHub Actions системные библиотеки устанавливаются отдельным Linux-шагом, после чего явно проверяется создание `QApplication`. Ошибка загрузки Qt не маскируется пропуском тестов. CLI настраивает stdout/stderr на UTF-8, включая перенаправленный вывод Windows; в CI дополнительно включён `PYTHONUTF8=1`.
 
 ## Сначала проверка без игры
 
