@@ -78,6 +78,8 @@ class CommanderWindow(QMainWindow):
 
         self.live = QCheckBox("Реальное управление HOI4 (Windows)")
         self.live.setChecked(False)
+        self.local_screenshots = QCheckBox("Явно разрешаю передавать скриншоты локальной Ollama на этом компьютере")
+        self.local_screenshots.setChecked(False)
         self.external = QCheckBox("Явно разрешаю отправку скриншотов во внешний API")
         self.external.setChecked(False)
         self.confirm_button = QPushButton("Подтвердить доступ к реальной игре")
@@ -103,6 +105,7 @@ class CommanderWindow(QMainWindow):
             controls.addWidget(widget)
         layout = QVBoxLayout()
         layout.addWidget(self.live)
+        layout.addWidget(self.local_screenshots)
         layout.addWidget(self.external)
         layout.addLayout(controls)
         layout.addWidget(self.status)
@@ -122,7 +125,7 @@ class CommanderWindow(QMainWindow):
             "Агент сможет нажимать мышь и клавиши только в активном окне HOI4. "
             "Перед запуском нужны проверенные шаблоны вашего интерфейса и тесты остановки. "
             "F10 останавливает агента. Подтверждаете доступ к реальной игре? "
-            "Это не разрешает отправку скриншотов во внешний API.",
+            "Это не разрешает передачу скриншотов локальной Ollama или внешнему API.",
             QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
             QMessageBox.StandardButton.No,
         )
@@ -145,6 +148,7 @@ class CommanderWindow(QMainWindow):
                 **self._settings.model_dump(),
                 "mode": "live" if self.live.isChecked() else "dry_run",
                 "allow_external_screenshots": self.external.isChecked(),
+                "allow_local_screenshots": self.local_screenshots.isChecked(),
             })
         except Exception:
             self.status.setText("Некорректная конфигурация. Для игры укажите собственный манифест шаблонов.")
@@ -161,7 +165,7 @@ class CommanderWindow(QMainWindow):
         self._thread.start()
 
     def _set_controls_running(self, running: bool) -> None:
-        for widget in (self.start_button, self.live, self.external, self.confirm_button):
+        for widget in (self.start_button, self.live, self.local_screenshots, self.external, self.confirm_button):
             widget.setEnabled(not running)
         self.stop_button.setEnabled(running)
 

@@ -47,7 +47,7 @@ def window(app, tmp_path):
 
 def test_config_cannot_enable_live_or_external_without_ui(app, tmp_path):
     settings = Settings(
-        mode="live", allow_external_screenshots=True,
+        mode="live", allow_external_screenshots=True, allow_local_screenshots=True,
         template_manifest=tmp_path / "manifest.json",
         consent_file=tmp_path / "consent.json",
     )
@@ -67,12 +67,14 @@ def test_config_cannot_enable_live_or_external_without_ui(app, tmp_path):
     panel = CommanderWindow(settings, factory)
     assert not panel.live.isChecked()
     assert not panel.external.isChecked()
+    assert not panel.local_screenshots.isChecked()
     assert "dry-run" in panel.start_button.text()
     panel.start_button.click()
     pump(app, lambda: not panel._busy)
     assert len(received) == 1
     assert received[0].mode == "dry_run"
     assert received[0].allow_external_screenshots is False
+    assert received[0].allow_local_screenshots is False
     assert not settings.consent_file.exists()
     assert panel.start_button.isEnabled()
     assert not panel.stop_button.isEnabled()
@@ -118,10 +120,14 @@ def test_stop_reaches_background_controller(window, app):
     pump(app, started.is_set)
     assert window._busy and window.stop_button.isEnabled()
     assert not window.start_button.isEnabled()
+    assert not window.local_screenshots.isEnabled()
+    assert not window.external.isEnabled()
     window.stop_button.click()
     pump(app, lambda: not window._busy)
     assert stopped.is_set()
     assert window.start_button.isEnabled()
+    assert window.local_screenshots.isEnabled()
+    assert window.external.isEnabled()
 
 
 def test_consent_requires_explicit_yes(window, monkeypatch):
@@ -153,3 +159,29 @@ def test_worker_error_does_not_display_raw_exception(window, app):
 def test_model_explanation_is_plain_text(window):
     window._on_event({"type": "status", "message": "<b>Объяснение</b>"})
     assert "<b>Объяснение</b>" in window.log.toPlainText()
+
+
+@pytest.mark.parametrize("local, external", [(True, False), (False, True)])
+def test_screenshot_permissions_are_explicit_and_independent(window, app, local, external):
+    received = []
+
+    class Controller:
+        def run(self):
+            pass
+
+        def stop(self):
+            pass
+
+    def factory(current, callback):
+        received.append(current)
+        return Controller()
+
+    window._factory = factory
+    window.local_screenshots.setChecked(local)
+    window.external.setChecked(external)
+    window.start_button.click()
+    pump(app, lambda: not window._busy)
+    assert len(received) == 1
+    assert received[0].allow_local_screenshots is local
+    assert received[0].allow_external_screenshots is external
+    assert received[0].mode == "dry_run"

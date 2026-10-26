@@ -155,4 +155,9 @@ def create_provider(settings: Settings) -> ModelProvider:
     """Создать выбранный провайдер без сетевых запросов."""
     if settings.provider.kind == "local":
         return LocalProvider()
+    if settings.provider.kind == "ollama":
+        from .ollama_provider import OllamaProvider
+        return OllamaProvider(settings.provider,
+                              allow_local_screenshots=settings.allow_local_screenshots,
+                              allow_external_screenshots=settings.allow_external_screenshots)
     return OpenAICompatibleProvider(settings.provider, settings.allow_external_screenshots)

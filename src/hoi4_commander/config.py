@@ -8,16 +8,25 @@ from .models import StrictModel
 
 
 class ProviderConfig(StrictModel):
-    kind: Literal["local", "openai_compatible"] = "local"
+    kind: Literal["local", "openai_compatible", "ollama"] = "local"
     base_url: str = "https://api.openai.com/v1"
     model: str = "gpt-4.1-mini"
     api_key_env: str = "HOI4_MODEL_API_KEY"
-    timeout_seconds: float = Field(default=30, gt=0, le=120)
+    timeout_seconds: float = Field(default=30, gt=0, le=600)
+
+    @model_validator(mode="before")
+    @classmethod
+    def defaults_for_ollama(cls, values):
+        if isinstance(values, dict) and values.get("kind") == "ollama":
+            return {"base_url": "http://127.0.0.1:11434", "model": "qwen2.5vl:7b",
+                    "timeout_seconds": 180, **values}
+        return values
 
 
 class Settings(StrictModel):
     mode: Literal["dry_run", "live"] = "dry_run"
     allow_external_screenshots: StrictBool = False
+    allow_local_screenshots: StrictBool = False
     template_manifest: Path | None = None
     journal_dir: Path = Path("runtime/journal")
     consent_file: Path = Path("runtime/live-consent.json")

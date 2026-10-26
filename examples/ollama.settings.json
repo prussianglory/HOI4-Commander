@@ -1,0 +1,17 @@
+{
+  "mode": "dry_run",
+  "allow_local_screenshots": true,
+  "allow_external_screenshots": false,
+  "template_manifest": null,
+  "journal_dir": "runtime/journal",
+  "consent_file": "runtime/live-consent.json",
+  "frame_max_age_seconds": 2,
+  "verification_timeout_seconds": 5,
+  "provider": {
+    "kind": "ollama",
+    "base_url": "http://127.0.0.1:11434",
+    "model": "qwen2.5vl:7b",
+    "api_key_env": "HOI4_MODEL_API_KEY",
+    "timeout_seconds": 180
+  }
+}
