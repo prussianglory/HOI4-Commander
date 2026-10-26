@@ -1,0 +1,22 @@
+{
+  "synthetic": false,
+  "templates": [
+    {"id": "nation_germany", "file": "nation_germany.png", "threshold": 0.97},
+    {"id": "date_1936_01_01", "file": "date_1936_01_01.png", "threshold": 0.97},
+    {"id": "game_paused", "file": "game_paused.png", "threshold": 0.97},
+    {"id": "focus_menu", "file": "focus_menu.png", "threshold": 0.97},
+    {"id": "focus_available", "file": "focus_available.png", "threshold": 0.97},
+    {"id": "focus_start", "file": "focus_start.png", "threshold": 0.97},
+    {"id": "focus_active", "file": "focus_active.png", "threshold": 0.97},
+    {"id": "research_menu", "file": "research_menu.png", "threshold": 0.97},
+    {"id": "research_slot", "file": "research_slot.png", "threshold": 0.97},
+    {"id": "technology_available", "file": "technology_available.png", "threshold": 0.97},
+    {"id": "technology_start", "file": "technology_start.png", "threshold": 0.97},
+    {"id": "research_active", "file": "research_active.png", "threshold": 0.97},
+    {"id": "construction_menu", "file": "construction_menu.png", "threshold": 0.97},
+    {"id": "civilian_factory_tool", "file": "civilian_factory_tool.png", "threshold": 0.97},
+    {"id": "building_state", "file": "building_state.png", "threshold": 0.97},
+    {"id": "construction_queued", "file": "construction_queued.png", "threshold": 0.97}
+  ],
+  "frames": []
+}

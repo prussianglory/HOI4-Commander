@@ -1,0 +1,21 @@
+name: Проверки прототипа
+on: [push, pull_request]
+jobs:
+  tests:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    env:
+      QT_QPA_PLATFORM: offscreen
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Установка зависимостей
+        run: python -m pip install -e ".[dev,windows]"
+      - name: Тесты без реальной игры
+        run: python -m pytest -q
+      - name: Полный мок-сценарий
+        run: python -m hoi4_commander.cli demo --mock-execute
