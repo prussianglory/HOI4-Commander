@@ -26,6 +26,17 @@ python -m pip install -e '.[dev]'
 python -m pytest
 ```
 
+Для запуска панели и её тестов на Ubuntu/Debian дополнительно нужны системные библиотеки Qt. Одной установки PySide6 через pip недостаточно; `QT_QPA_PLATFORM=offscreen` убирает необходимость дисплея, но не зависимость от EGL/OpenGL:
+
+```bash
+sudo apt-get update
+sudo apt-get install -y --no-install-recommends libegl1 libgl1 libopengl0 libxkbcommon0 libdbus-1-3
+python -m pip install -e '.[dev,windows]'
+QT_QPA_PLATFORM=offscreen python -m pytest -q
+```
+
+Группа `windows` включает PySide6 и на Linux; PyDirectInput устанавливается только на Windows. В GitHub Actions системные библиотеки устанавливаются отдельным Linux-шагом, после чего явно проверяется создание `QApplication`. Ошибка загрузки Qt не маскируется пропуском тестов.
+
 ## Сначала проверка без игры
 
 ```powershell
